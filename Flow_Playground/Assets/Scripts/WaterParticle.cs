@@ -17,15 +17,14 @@ public class WaterParticle {
 		BirthTime = Time.time;
 	}
 
-	public WaterParticle[] UpdateParticle()
+	public WaterParticle UpdateParticle()
 	{
-		WaterParticle[] self = new WaterParticle[] { this };
 		if(!WithinOneZero(this.Position + Direction))
 		{
 			Direction *= -1f;
 		}
 		this.Position += Direction;
-		return self;
+		return this;
  	}
 
 	public bool WithinOneZero(Vector2 vector)

@@ -50,13 +50,20 @@
 
 			float remap_value(float value,float old_min,float old_max,float new_min, float new_max) 
 			{
-				return new_min + (value - old_min)*(new_max - new_min) / (old_max - old_min);
+				return clamp(new_min + (value - old_min)*(new_max - new_min) / (old_max - old_min),0,1);
 			}
 
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 col = tex2D(_MainTex, i.uv);
-				fixed2 OverlayUV = fixed2(remap_value(i.uv, _PosX, _PosX + _Radius, 0, 1), remap_value(i.uv, _PosY, _PosY + _Radius, 0, 1));
+
+				fixed2 OverlayUV = (
+					fixed2(
+						remap_value(i.uv.x, _PosX - _Radius, _PosX + _Radius, 0, 1), 
+						remap_value(i.uv.y, _PosY - _Radius, _PosY + _Radius, 0, 1)
+					)
+				);
+
 				col += tex2D(_ParticleTex, OverlayUV);
                 return col;
             }

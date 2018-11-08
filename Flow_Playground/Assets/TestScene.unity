@@ -824,7 +824,7 @@ MonoBehaviour:
   WaterTexture: {fileID: 0}
   ParticleRender: {fileID: 0}
   DummyMat: {fileID: 2100000, guid: b2cb56c679e2f764fb17f2c665449991, type: 2}
-  Particle_Radius: 0.47
+  Particle_Radius: 0.02
 --- !u!4 &1482919244
 Transform:
   m_ObjectHideFlags: 0

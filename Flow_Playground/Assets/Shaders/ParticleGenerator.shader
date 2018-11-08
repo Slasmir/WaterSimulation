@@ -38,7 +38,7 @@
 
             fixed4 frag (v2f i) : SV_Target
             {
-				fixed4 col = 1 - distance(i.uv, float2(0.5,0.5)) * 2;
+				fixed4 col = 1 - distance(i.uv, float2(0.5,0.5)) * 2.1;
                 return col;
             }
             ENDCG

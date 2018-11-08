@@ -82,37 +82,36 @@ public class WaveSystem : MonoBehaviour {
 		if (Input.GetMouseButtonDown(1))
 			Particles.Clear();
 
-		if (Input.GetMouseButtonDown(0))
-			EruptParticles(new Vector2(0.5f, 0.5f), 120, 0.005f);
-
+        if (Input.GetMouseButtonDown(2))
+        {
+            EruptParticles(new Vector2(0.5f, 0.5f), 120, 0.005f);
+        }
+        Debug.Log(Particles.Count);
 		if(Particles.Count != 0)
 		{
-			List<WaterParticle> NewParticles = new List<WaterParticle>();
-
-			SetArray = Enumerable.Repeat<Color>(Color.black, TextureSize * TextureSize).ToArray();
+            RenderTexture ProcessingTexture = new RenderTexture(TextureSize, TextureSize,8);
 			foreach (WaterParticle particle in Particles)
 			{
-				WaterParticle[] subParticles = particle.UpdateParticle();
-				foreach(WaterParticle subParticle in subParticles)
-				{
-					Vector2 TexturePos = subParticle.Position * TextureSize;
-					int x = Mathf.FloorToInt(TexturePos.x);
-					int y = Mathf.FloorToInt(TexturePos.y);
-					try
-					{
-						SetArray[x + TextureSize * y] = Color.white;
-					}
-					catch
-					{
-						Debug.Log("x: " + x + "    y: " + y);
-					}
-						NewParticles.Add(subParticle);
-				}
+				particle.UpdateParticle();
+
+				Vector2 TexturePos = particle.Position;
+				float x = TexturePos.x;
+				float y = TexturePos.y;
+
+                ParticleRender.SetFloat("_PosX", x);
+                ParticleRender.SetFloat("_PosY", y);
+
+                Graphics.Blit(ProcessingTexture, ProcessingTexture, ParticleRender);
 			}
-			WaterTexture.SetPixels(SetArray);
+
+            RenderTexture.active = ProcessingTexture;
+
+			WaterTexture.ReadPixels(new Rect(0,0,TextureSize, TextureSize),0,0);
 			WaterTexture.Apply();
+
+            RenderTexture.active = null;
+
 			DummyMat.mainTexture = WaterTexture;
-			Particles = NewParticles;
 		}
 
 	}
