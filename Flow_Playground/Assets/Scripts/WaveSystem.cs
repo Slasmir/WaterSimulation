@@ -19,7 +19,7 @@ public class WaveSystem : MonoBehaviour {
     [Header("Particle Settings")]
     public float Particle_Radius = 0.2f;
 
-	private int TextureSize = 128;
+	private int TextureSize = 512;
 	private void Start()
 	{
 		Particles = new List<WaterParticle>();
@@ -89,8 +89,10 @@ public class WaveSystem : MonoBehaviour {
         Debug.Log(Particles.Count);
 		if(Particles.Count != 0)
 		{
-            RenderTexture ProcessingTexture = new RenderTexture(TextureSize, TextureSize,8);
-			foreach (WaterParticle particle in Particles)
+            RenderTexture ProcessingTexture1 = new RenderTexture(TextureSize, TextureSize,8);
+            RenderTexture ProcessingTexture2 = new RenderTexture(TextureSize, TextureSize, 8);
+            int counter = 0;
+            foreach (WaterParticle particle in Particles)
 			{
 				particle.UpdateParticle();
 
@@ -98,13 +100,22 @@ public class WaveSystem : MonoBehaviour {
 				float x = TexturePos.x;
 				float y = TexturePos.y;
 
-                ParticleRender.SetFloat("_PosX", x);
-                ParticleRender.SetFloat("_PosY", y);
+                Material m = new Material(ParticleRender);
+                m.SetFloat("_PosX", x);
+                m.SetFloat("_PosY", y);
+                if (counter % 2 == 0)
+                    Graphics.Blit(ProcessingTexture1, ProcessingTexture2, m);
+                else
+                    Graphics.Blit(ProcessingTexture2, ProcessingTexture1, m);
+                RenderTexture.active = null;
 
-                Graphics.Blit(ProcessingTexture, ProcessingTexture, ParticleRender);
+                counter++;
 			}
 
-            RenderTexture.active = ProcessingTexture;
+            if (counter % 2 == 0)
+                RenderTexture.active = ProcessingTexture1;
+            else
+                RenderTexture.active = ProcessingTexture2;
 
 			WaterTexture.ReadPixels(new Rect(0,0,TextureSize, TextureSize),0,0);
 			WaterTexture.Apply();
